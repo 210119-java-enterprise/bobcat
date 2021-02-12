@@ -35,9 +35,8 @@ public class RequestWorker implements Runnable {
 
             try {
                 outputStream.write(response.getStatusLine().getBytes());
-                outputStream.write(("Server: Bobcat").getBytes());
-                outputStream.write(("Content-Length: " + response.getContentLength()).getBytes());
-                outputStream.write(("Content-Type: " + response.getContentType()).getBytes());
+                outputStream.write(("Content-Length: " + response.getContentLength()+ "\r\n").getBytes());
+                outputStream.write(("Content-Type: " + response.getContentType()+ "\r\n").getBytes());
                 outputStream.write(("\r\n").getBytes());
 
                 String line = reader.readLine();
