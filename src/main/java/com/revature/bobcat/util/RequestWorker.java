@@ -19,29 +19,33 @@ public class RequestWorker implements Runnable {
 
         try {
 
+            // Parse incoming request here
+            HttpRequest incomingRequest = new HttpRequestParser().parseRequest(clientSocket);
+
+            System.out.println(incomingRequest);
+
+            // Handle the request and generate some response
+
             // Mock response
             HttpResponse response = new HttpResponse();
             response.setHttpVersion("HTTP/1.1")
                     .setStatusCode(200)
                     .setStatusMessage("OK")
-                    .setBody("<h1>Server response provided by thread: " + threadName + "</h1>")
+                    .setBody("<h3>Server response provided by thread: " + threadName + "</h3>")
                     .setContentLength(response.getBody().length())
                     .setContentType("text/html");
-
-            System.out.println(response);
 
             OutputStream outputStream = clientSocket.getOutputStream();
             BufferedReader reader = new BufferedReader(new StringReader(response.getBody()));
 
             try {
                 outputStream.write(response.getStatusLine().getBytes());
-                outputStream.write(("Content-Length: " + response.getContentLength()+ "\r\n").getBytes());
-                outputStream.write(("Content-Type: " + response.getContentType()+ "\r\n").getBytes());
+                outputStream.write(("Content-Length: " + response.getContentLength() + "\r\n").getBytes());
+                outputStream.write(("Content-Type: " + response.getContentType() + "\r\n").getBytes());
                 outputStream.write(("\r\n").getBytes());
 
                 String line = reader.readLine();
                 while (line != null) {
-                    System.out.println(line);
                     outputStream.write(line.getBytes());
                     line = reader.readLine();
                 }
