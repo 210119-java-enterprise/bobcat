@@ -38,6 +38,8 @@ public class RequestWorker implements Runnable {
             OutputStream outputStream = clientSocket.getOutputStream();
             BufferedReader reader = new BufferedReader(new StringReader(response.getBody()));
 
+            // System.out.println("Thread working on writing stuff: " + Thread.currentThread().getName());
+
             try {
                 outputStream.write(response.getStatusLine().getBytes());
                 outputStream.write(("Content-Length: " + response.getContentLength() + "\r\n").getBytes());
