@@ -3,7 +3,6 @@ package com.revature.bobcat.util;
 import java.io.*;
 import java.net.Socket;
 import java.net.SocketException;
-import java.nio.charset.StandardCharsets;
 
 public class RequestWorker implements Runnable{
 

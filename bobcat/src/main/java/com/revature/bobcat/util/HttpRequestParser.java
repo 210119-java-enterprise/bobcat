@@ -12,15 +12,12 @@ public class HttpRequestParser {
     // TODO: IMPLEMENT ME!
     public HttpRequest parseRequest(Socket clientSocket) {
         HttpRequest request = new HttpRequest();
+        String line = "";
         try {
             Map<String, String> headerMap = new HashMap<>();
 
             BufferedReader reader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-            String line = reader.readLine();
-
-            if(line == null){
-                throw new RuntimeException("Could not find the http method, version or rui");
-            }
+            line = reader.readLine();
 
             String[] firstLine = line.split(" ");
             request.setHttpMethod(firstLine[0]);
@@ -34,8 +31,7 @@ public class HttpRequestParser {
                 line = reader.readLine();
             }
             request.setHeaders(headerMap);
-
-            StringBuilder body = new StringBuilder();
+            StringBuilder body = new StringBuilder("");
             while(line != null){
                 body.append(line);
                 line = reader.readLine();
