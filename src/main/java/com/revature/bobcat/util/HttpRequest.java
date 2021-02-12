@@ -18,6 +18,13 @@ public class HttpRequest {
         this.body = body;
     }
 
+    public HttpRequest(String httpMethod, String httpVersion, String uri, String body) {
+        this.httpMethod = httpMethod;
+        this.httpVersion = httpVersion;
+        this.uri = uri;
+        this.body = body;
+    }
+
     public String getHttpMethod() {
         return httpMethod;
     }

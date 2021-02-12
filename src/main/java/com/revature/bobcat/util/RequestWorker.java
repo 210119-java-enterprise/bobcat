@@ -26,6 +26,7 @@ public class RequestWorker implements Runnable {
 
             // Handle the request and generate some response
 
+
             // Mock response
             HttpResponse response = new HttpResponse();
             response.setHttpVersion("HTTP/1.1")
