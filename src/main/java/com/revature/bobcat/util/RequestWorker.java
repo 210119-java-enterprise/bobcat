@@ -22,12 +22,12 @@ public class RequestWorker implements Runnable {
             // Parse incoming request here
             HttpRequest incomingRequest = new HttpRequestParser().parseRequest(clientSocket);
 
-            System.out.println(incomingRequest);
+            System.out.println(incomingRequest.toString());
 
             // Handle the request and generate some response
 
             // Mock response
-            HttpResponse response = new HttpResponse();
+            /*HttpResponse response = new HttpResponse();
             response.setHttpVersion("HTTP/1.1")
                     .setStatusCode(200)
                     .setStatusMessage("OK")
@@ -57,8 +57,8 @@ public class RequestWorker implements Runnable {
                 e.printStackTrace();
                 clientSocket.close();
             }
-
-        } catch (IOException e) {
+*/
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
