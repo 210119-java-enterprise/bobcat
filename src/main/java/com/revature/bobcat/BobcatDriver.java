@@ -14,6 +14,7 @@ public class BobcatDriver {
 
         System.out.println("Starting Bobcat server on port 8080");
         BobcatWebServer server = new BobcatWebServer();
-
+        server.listen(8080);
     }
+
 }

@@ -78,4 +78,17 @@ public class HttpResponse {
     public String getStatusLine() {
         return httpVersion + " " + statusCode + " " + statusMessage + "\r\n";
     }
+
+    @Override
+    public String toString() {
+        return "HttpResponse{" +
+                "httpVersion='" + httpVersion + '\'' +
+                ", statusCode=" + statusCode +
+                ", statusMessage='" + statusMessage + '\'' +
+                ", headers=" + headers +
+                ", body='" + body + '\'' +
+                ", contentLength=" + contentLength +
+                ", contentType='" + contentType + '\'' +
+                '}';
+    }
 }

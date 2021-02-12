@@ -13,27 +13,30 @@ public class BobcatWebServer {
     private int serverPort;
     private ServerSocket serverSocket;
     private boolean isStopped;
-    private ExecutorService threadPool = Executors.newFixedThreadPool(10);
+    private final ExecutorService threadPool = Executors.newFixedThreadPool(10);
 
-    public void listen() {
-        serverPort = 8080;
-        isStopped = false;
+    public void listen(int port) {
+        this.serverPort = port;
+        this.isStopped = false;
+        start();
     }
 
+    // TODO: implementation
     public synchronized void shutdown() {
 
     }
 
-    public void start() {
-        try {
-            serverSocket = new ServerSocket(serverPort);
+    private void start() {
 
+        try {
+            this.serverSocket = new ServerSocket(this.serverPort);
             while(!isStopped) {
-                Socket clientSocket = serverSocket.accept();
+                Socket clientSocket = serverSocket.accept(); // blocks until a client request comes in
                 this.threadPool.execute(new RequestWorker(clientSocket));
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
+
     }
 }
