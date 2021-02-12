@@ -22,7 +22,9 @@ public class RequestWorker implements Runnable {
             // Parse incoming request here
             HttpRequest incomingRequest = new HttpRequestParser().parseRequest(clientSocket);
 
+
             System.out.println(incomingRequest);
+
 
             // Handle the request and generate some response
 

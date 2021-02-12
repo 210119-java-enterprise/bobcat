@@ -10,6 +10,10 @@ public class HttpRequest {
     private Map<String, String> headers;
     private String body;
 
+    public HttpRequest() {
+        super();
+    }
+
     public HttpRequest(String httpMethod, String httpVersion, String uri, Map<String, String> headers, String body) {
         this.httpMethod = httpMethod;
         this.httpVersion = httpVersion;
