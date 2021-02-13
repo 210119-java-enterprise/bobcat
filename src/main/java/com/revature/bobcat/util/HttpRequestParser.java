@@ -2,6 +2,7 @@ package com.revature.bobcat.util;
 import java.io.InputStreamReader;
 import java.net.Socket;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -9,6 +10,8 @@ public class HttpRequestParser {
     static final private Pattern inst_pat = Pattern.compile("[^ :]+");
     static final private Pattern vers_pat = Pattern.compile("HTTP/([^\\s]+)");
     static final private Pattern uri_pat  = Pattern.compile("Host:\\s+(.+)");
+    static final private Pattern hdr_pat  = Pattern.compile(":\\s+(.+)");
+    private boolean BODY_FLAG = false;
 
     public HttpRequest parseRequest(Socket clientSocket) {
         try {
@@ -17,13 +20,22 @@ public class HttpRequestParser {
             while(input.ready()) {
                 str.append((char)input.read());
             }
-            final HttpRequest htp = new HttpRequest(null,null,null,null,null);
+            final HttpRequest htp = new HttpRequest(null,null,null,new HashMap<String,String>(),null);
             parseStringBuilder(str,htp);
-            System.out.println(htp.toString());
+            return htp;
         }catch(Exception e) {
             e.printStackTrace();
         }
         return null;
+    }
+
+    private void setHttpHeader(final String header,final String s,final HttpRequest htp) {
+        final Matcher match = hdr_pat.matcher(s);
+        if(match.find()) {
+            System.out.println("Header: " + match.group(1));
+            htp.getHeaders().put(header,match.group(1));
+        }
+
     }
 
     private void setHttpVersion(final String line, final HttpRequest htp) {
@@ -49,8 +61,19 @@ public class HttpRequestParser {
         Arrays.stream(lines).forEach(s ->parseString(s,htp));
     }
 
+    private void parseStringSomeMore(final String m, final String str,final HttpRequest htp) {
+        if(BODY_FLAG) {
+            htp.setBody(str);
+        }
+        else if(str.length() == 0) {
+            BODY_FLAG = true;
+        }
+        else {
+            htp.getHeaders().put(m,str);
+        }
+    }
+
     private void parseString(final String str,final HttpRequest htp) {
-        System.out.println(str);
        final Matcher match = inst_pat.matcher(str);
        if(match.find()) {
            final String m = match.group();
@@ -67,18 +90,13 @@ public class HttpRequestParser {
                    setHttpMethod(m,htp);
                    setHttpVersion(str,htp);
                    break;
-               case "User-Agent":
-                   break;
                case "Host":
                    setHttpURI(str,htp);
                    break;
-               case "Accept-Language":
-                   break;
-               case "Accept-Encoding":
-                   break;
-               case "Connection":
+              default: parseStringSomeMore(m,str,htp);
                    break;
            }
        }
    }
+
 }
