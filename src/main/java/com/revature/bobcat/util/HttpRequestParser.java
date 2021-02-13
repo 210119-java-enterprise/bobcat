@@ -1,13 +1,14 @@
 package com.revature.bobcat.util;
 import java.io.InputStreamReader;
 import java.net.Socket;
+import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class HttpRequestParser {
     static final private Pattern inst_pat = Pattern.compile("[^ :]+");
     static final private Pattern vers_pat = Pattern.compile("HTTP/([^\\s]+)");
-    static final private Pattern uri_pat  = Pattern.compile("HOST: (.+)");
+    static final private Pattern uri_pat  = Pattern.compile("Host:\\s+(.+)");
 
     public HttpRequest parseRequest(Socket clientSocket) {
         try {
@@ -17,7 +18,8 @@ public class HttpRequestParser {
                 str.append((char)input.read());
             }
             final HttpRequest htp = new HttpRequest(null,null,null,null,null);
-            parseString(str,htp);
+            parseStringBuilder(str,htp);
+            System.out.println(htp.toString());
         }catch(Exception e) {
             e.printStackTrace();
         }
@@ -37,44 +39,46 @@ public class HttpRequestParser {
 
     private void setHttpURI(final String s, final HttpRequest htp) {
         final Matcher match = uri_pat.matcher(s);
-        if (match.find() ){
+        if (match.find()) {
             htp.setUri(match.group(1));
         }
     }
 
-    private void parseString(final StringBuilder str,final HttpRequest htp) {
-       final String[] lines = str.toString().split("\r\n");
-       for(String s: lines) {
-           final Matcher match = inst_pat.matcher(s);
-           if(match.find()) {
-               final String m = match.group();
-               switch (m) {
-                   case "GET":
-                   case "POST":
-                   case "PUT":
-                   case "HEAD":
-                   case "DELETE":
-                   case "PATCH":
-                   case "OPTIONS":
-                   case "Trace":
-                   case "Connect":
-                       setHttpMethod(m,htp);
-                       setHttpVersion(s,htp);
-                       break;
-                   case "User-Agent":
-                       break;
-                   case "Host":
-                       setHttpURI(s,htp);
-                       break;
-                   case "Accept-Language":
-                       break;
-                   case "Accept-Encoding":
-                       break;
-                   case "Connection":
-                       break;
-               }
-           }
-       }
+    private void parseStringBuilder(final StringBuilder str,final HttpRequest htp) {
+        final String[] lines = str.toString().split("\r\n");
+        Arrays.stream(lines).forEach(s ->parseString(s,htp));
     }
 
+    private void parseString(final String str,final HttpRequest htp) {
+        System.out.println(str);
+       final Matcher match = inst_pat.matcher(str);
+       if(match.find()) {
+           final String m = match.group();
+           switch (m) {
+               case "GET":
+               case "POST":
+               case "PUT":
+               case "HEAD":
+               case "DELETE":
+               case "PATCH":
+               case "OPTIONS":
+               case "Trace":
+               case "Connect":
+                   setHttpMethod(m,htp);
+                   setHttpVersion(str,htp);
+                   break;
+               case "User-Agent":
+                   break;
+               case "Host":
+                   setHttpURI(str,htp);
+                   break;
+               case "Accept-Language":
+                   break;
+               case "Accept-Encoding":
+                   break;
+               case "Connection":
+                   break;
+           }
+       }
+   }
 }
