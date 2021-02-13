@@ -15,14 +15,24 @@ public class HttpRequestParser {
 
     public HttpRequest parseRequest(Socket clientSocket) {
         try {
-            final InputStreamReader input = new InputStreamReader(clientSocket.getInputStream());
-            StringBuilder str = new StringBuilder();
-            while(input.ready()) {
-                str.append((char)input.read());
-            }
-            final HttpRequest htp = new HttpRequest(null,null,null,new HashMap<String,String>(),null);
-            parseStringBuilder(str,htp);
+            final StringBuilder str = readInput(clientSocket);
+            final HttpRequest htp = new HttpRequest(null, null, null, new HashMap<String, String>(), null);
+            parseStringBuilder(str, htp);
             return htp;
+        }catch(Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    private StringBuilder readInput(final Socket clientSocket) {
+        try {
+            final InputStreamReader input = new InputStreamReader(clientSocket.getInputStream());
+            StringBuilder str             = new StringBuilder();
+            while (input.ready()) {
+                str.append((char) input.read());
+            }
+            return str;
         }catch(Exception e) {
             e.printStackTrace();
         }
@@ -34,7 +44,6 @@ public class HttpRequestParser {
         if(match.find()) {
             htp.getHeaders().put(header,match.group(1));
         }
-
     }
 
     private void setHttpVersion(final String line, final HttpRequest htp) {
@@ -55,22 +64,21 @@ public class HttpRequestParser {
         }
     }
 
-    private void parseStringBuilder(final StringBuilder str,final HttpRequest htp) {
-        final String[] lines = str.toString().split("\r\n");
-        Arrays.stream(lines).forEach(s ->parseString(s,htp));
-    }
-
     private void parseStringSomeMore(final String m, final String str,final HttpRequest htp) {
         if(BODY_FLAG) {
             htp.setBody(str);
         }
-        else if(str.length() == 0) {
+        else if("".equals(str.trim())) {
             BODY_FLAG = true;
         }
         else {
             setHttpHeader(m,str,htp);
-
         }
+    }
+
+    private void parseStringBuilder(final StringBuilder str,final HttpRequest htp) {
+        final String[] lines = str.toString().split("\r\n");
+        Arrays.stream(lines).forEach(s ->parseString(s,htp));
     }
 
     private void parseString(final String str,final HttpRequest htp) {
@@ -97,6 +105,9 @@ public class HttpRequestParser {
                    break;
            }
        }
-   }
+       else{
+           parseStringSomeMore(null, str, htp);
+       }
+    }
 
 }
