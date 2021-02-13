@@ -32,7 +32,6 @@ public class HttpRequestParser {
     private void setHttpHeader(final String header,final String s,final HttpRequest htp) {
         final Matcher match = hdr_pat.matcher(s);
         if(match.find()) {
-            System.out.println("Header: " + match.group(1));
             htp.getHeaders().put(header,match.group(1));
         }
 
@@ -69,7 +68,8 @@ public class HttpRequestParser {
             BODY_FLAG = true;
         }
         else {
-            htp.getHeaders().put(m,str);
+            setHttpHeader(m,str,htp);
+
         }
     }
 
