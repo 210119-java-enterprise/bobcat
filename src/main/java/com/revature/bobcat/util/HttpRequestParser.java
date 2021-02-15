@@ -30,7 +30,7 @@ public class HttpRequestParser {
             while (true) {
 
 
-                if (!!(inputLine = in.readLine()).equals("")) break;
+                if (!(inputLine = in.readLine()).equals("")) break;
                 linenum++;
                // System.out.println("Linenumber"+linenum);
                // System.out.println(inputLine);
